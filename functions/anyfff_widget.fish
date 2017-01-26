@@ -1,6 +1,9 @@
 function anyfff_widget -a subcommand
   test (count $argv) -gt 1; and set -l subcommand_arguments $argv[2..-1]
 
+  # set environments
+  not set -q ANYFFF__ENVIRONMENTS; and emit anyfff_set_envs
+
   function put_history \
     --inherit-variable subcommand_arguments \
     -d 'Put the command selected from the command history on the commandline'
