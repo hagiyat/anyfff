@@ -1,15 +1,15 @@
-function anyfff.util.reverse
-  awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
-end
-
-function anyfff.util.unique
-  awk '!colname[$1]++ {print}'
-end
-
-function anyfff.util.last
-  awk '{print $NF}'
-end
-
-function anyfff.util.first
-  awk '{print $NR}'
+function __anyfff_util -a subcommand
+  switch $subcommand
+    case reverse
+      awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
+    case unique
+      awk '!colname[$1]++ {print}'
+    case first
+      awk '{print $NR}'
+    case last
+      awk '{print $NF}'
+    case '*'
+      echo "undefined subcommand / $subcommand"
+      return 1
+  end
 end

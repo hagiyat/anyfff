@@ -1,10 +1,14 @@
-function anyfff.finder.single
-  eval "$ANYFFF__FINDER_APP -p '$argv'"
-end
+# Usage:
+# single select> __anyfff_finder -s 'prompt message > '
+# multiple select> __anyfff_finder -m 'prompt message[multi] > '
+function __anyfff_finder -a single_or_multi prompt
+  if [ $single_or_multi = '-s' ]
+    eval "$ANYFFF__FINDER_APP -p '$prompt'"
 
-function anyfff.finder.multiple
-  eval "$ANYFFF__FINDER_APP -p '$argv' $ANYFFF__FINDER_APP_OPTION_MULTIPLE" \
-    | anyfff.util.last \
-    | xargs
+  else
+    eval "$ANYFFF__FINDER_APP -p '$prompt' $ANYFFF__FINDER_APP_OPTION_MULTIPLE" \
+      | __anyfff_util last \
+      | xargs
+  end
 end
 
