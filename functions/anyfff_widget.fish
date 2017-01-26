@@ -1,5 +1,5 @@
 function anyfff_widget -a subcommand
-  test (count $argv) -gt 1; set -l subcommand_arguments $argv[2..-1]
+  test (count $argv) -gt 1; and set -l subcommand_arguments $argv[2..-1]
 
   function put_history \
     --inherit-variable subcommand_arguments \
