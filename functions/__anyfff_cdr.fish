@@ -68,7 +68,7 @@ end
 function __cdr_update_cache -a _dir
   set -l name_hash (__cdr_checksum $_dir)
   set -l dir_hash (__cdr_checksum (ls $_dir))
-  set -l target_file (__cdr_cache_path {$name_hash}.log)
+  set -l target_file (__cdr_path {$name_hash}.log)
 
   if __cdr_is_match_checksum $dir_hash $target_file
     __cdr_push_log "[found] $_dir -> $target_file"
@@ -93,7 +93,7 @@ end
 function __cdr_get_dirs -a _dir
   set -l name_hash (__cdr_checksum $_dir)
   set -l dir_hash (__cdr_checksum (ls $_dir))
-  set -l target_file (__cdr_cache_path {$name_hash}.log)
+  set -l target_file (__cdr_path {$name_hash}.log)
 
   if not __cdr_is_match_checksum $dir_hash $target_file
     __cdr_update_cache $_dir
