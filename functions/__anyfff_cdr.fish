@@ -1,6 +1,6 @@
 function __anyfff_cdr -d 'Returns the merged directory of the directory around the current directory and the history of cd'
   begin
-    cat (__cdr_path cdr_histories_file) \
+    cat (__cdr_history_file_path) \
       | __cdr_filter_pwd \
       | __cdr_add_mark 'cdr_histories_mark' \
       | __anyfff_util reverse
@@ -19,21 +19,30 @@ function __anyfff_cdr -d 'Returns the merged directory of the directory around t
   end
 end
 
-function __cdr_path -a file_symbol
+function __cdr_history_file_path
+  __cdr_path (__anyfff_env cdr_histories_file)
+end
+
+function __cdr_path -a file_name
   set -l dir (__anyfff_env cdr_cache_path)
   if not test -d $dir
     mkdir -p $dir
   end
-  set -l path (__anyfff_env cdr_cache_path $file_symbol | string join '/')
+
+  set -l path (string join '/' $dir $file_name)
   touch $path
   echo $path
 end
 
 function __cdr_register --on-variable PWD
-  fish -c __cdr_append_cd_history &
-  fish -c "__cdr_update_cache (realpath \"$PWD/..\")" &
-  fish -c "__cdr_update_cache (realpath $PWD)" &
-  fish -c __cdr_clear_cache &
+  # fish -c __cdr_append_cd_history &
+  # fish -c "__cdr_update_cache (realpath \"$PWD/..\")" &
+  # fish -c "__cdr_update_cache (realpath $PWD)" &
+  # fish -c __cdr_clear_cache &
+  __cdr_append_cd_history
+  __cdr_update_cache (realpath "$PWD/..")
+  __cdr_update_cache (realpath $PWD)
+  __cdr_clear_cache
 end
 
 function __cdr_clear_cache
@@ -48,7 +57,7 @@ function __cdr_clear_cache
 end
 
 function __cdr_append_cd_history
-  set -l path (__cdr_path cdr_histories_file)
+  set -l path (__cdr_history_file_path)
   pwd >> $path
   cat $path \
     | __anyfff_util reverse \
@@ -107,12 +116,12 @@ function __cdr_filter_pwd
 end
 
 function __cdr_add_mark -a _mark
-  set -l mark __anyfff_env $_mark
+  set -l mark (__anyfff_env $_mark)
   sed -e "s/^/$mark /g"
 end
 
 function __cdr_checksum -a v
-  echo $v | eval $ANYFFF__CHECKSUM_APP | __anyfff_util first
+  echo $v | eval (__anyfff_env checksum_app) | __anyfff_util first
 end
 
 function __cdr_is_match_checksum -a dir_hash file_name
