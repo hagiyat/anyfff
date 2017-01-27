@@ -1,45 +1,60 @@
 function __anyfff_cdr -d 'Returns the merged directory of the directory around the current directory and the history of cd'
   begin
-    cat $ANYFFF__CDR_HISTORIES_PATH \
+    cat (__cdr_path cdr_histories_file) \
       | __cdr_filter_pwd \
-      | __cdr_add_mark $ANYFFF__CDR_HISTORIES_MARK \
+      | __cdr_add_mark 'cdr_histories_mark' \
       | __anyfff_util reverse
     __cdr_get_dirs (realpath "$PWD/..") \
       | __cdr_filter_pwd \
-      | __cdr_add_mark $ANYFFF__CDR_SIBLINGS_MARK \
+      | __cdr_add_mark 'cdr_siblings_mark' \
       | __anyfff_util reverse
     __cdr_get_dirs $PWD \
       | __cdr_filter_pwd \
-      | __cdr_add_mark $ANYFFF__CDR_BRANCHES_MARK \
+      | __cdr_add_mark 'cdr_branches_mark' \
       | __anyfff_util reverse
     __cdr_root_dirs \
       | __cdr_filter_pwd \
-      | __cdr_add_mark $ANYFFF__CDR_ROOT_MARK \
+      | __cdr_add_mark 'cdr_root_mark' \
       | __anyfff_util reverse
   end
 end
 
+function __cdr_path -a file_symbol
+  set -l dir (__anyfff_env cdr_cache_path)
+  if not test -d $dir
+    mkdir -p $dir
+  end
+  set -l path (__anyfff_env cdr_cache_path $file_symbol | string join '/')
+  touch $path
+  echo $path
+end
+
 function __cdr_register --on-variable PWD
-  __cdr_append_cd_history &
-  __cdr_update_cache (realpath "$PWD/..") &
-  __cdr_update_cache (realpath $PWD) &
+  fish -c __cdr_append_cd_history &
+  fish -c "__cdr_update_cache (realpath \"$PWD/..\")" &
+  fish -c "__cdr_update_cache (realpath $PWD)" &
   fish -c __cdr_clear_cache &
 end
 
 function __cdr_clear_cache
-  find $ANYFFF__CDR_CACHE_PATH -type f \
-    -atime "+$ANYFFF__CDR_CACHE_LIFETIME" \
-    ! -name $ANYFFF__CDR_HISTORIES_FILE \
+  set -l cache_path (__anyfff_env cdr_cache_path)
+  set -l history_file (__anyfff_env cdr_histories_file)
+  set -l lifetime (__anyfff_env cdr_cache_lifetime)
+
+  find $cache_path -type f \
+    -atime "+$lifetime" \
+    ! -name $history_file \
     | xargs rm -f ^/dev/null
 end
 
 function __cdr_append_cd_history
-  pwd >> $ANYFFF__CDR_HISTORIES_PATH
-  cat $ANYFFF__CDR_HISTORIES_PATH \
+  set -l path (__cdr_path cdr_histories_file)
+  pwd >> $path
+  cat $path \
     | __anyfff_util reverse \
     | __anyfff_util unique \
     | __anyfff_util reverse \
-    > $ANYFFF__CDR_HISTORIES_PATH
+    > $path
 end
 
 function __cdr_root_dirs
@@ -53,7 +68,7 @@ end
 function __cdr_update_cache -a _dir
   set -l name_hash (__cdr_checksum $_dir)
   set -l dir_hash (__cdr_checksum (ls $_dir))
-  set -l target_file (printf "%s/%s.log" $ANYFFF__CDR_CACHE_PATH $name_hash)
+  set -l target_file (__cdr_cache_path {$name_hash}.log)
 
   if __cdr_is_match_checksum $dir_hash $target_file
     __cdr_push_log "[found] $_dir -> $target_file"
@@ -69,15 +84,16 @@ function __cdr_update_cache -a _dir
 end
 
 function __cdr_push_log -a message
-  if set -q ANYFFF__CDR_ACTIVITY_PATH
-    echo $message >> $ANYFFF__CDR_ACTIVITY_PATH
+  set -l path (__anyfff_env activity_path)
+  if set -q $path
+    echo $message >> $path
   end
 end
 
 function __cdr_get_dirs -a _dir
   set -l name_hash (__cdr_checksum $_dir)
   set -l dir_hash (__cdr_checksum (ls $_dir))
-  set -l target_file (printf "%s/%s.log" $ANYFFF__CDR_CACHE_PATH $name_hash)
+  set -l target_file (__cdr_cache_path {$name_hash}.log)
 
   if not __cdr_is_match_checksum $dir_hash $target_file
     __cdr_update_cache $_dir
@@ -90,7 +106,8 @@ function __cdr_filter_pwd
   awk -v pwd="$PWD" '$1!=pwd {print}'
 end
 
-function __cdr_add_mark -a mark
+function __cdr_add_mark -a _mark
+  set -l mark __anyfff_env $_mark
   sed -e "s/^/$mark /g"
 end
 
