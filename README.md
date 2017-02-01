@@ -60,10 +60,10 @@ Please assign favorite key bind to widget, set alias and use it.
 Example:
 
 ```fish
-bind \cr anyfff_widget put_history
-bind \cx\cx anyfff_widget put_filename
-bind \cx\cg anyfff_widget checkout_git_branch
-bind \cx\cb anyfff_widget put_git_branch
+bind \cr 'anyfff_widget put_history'
+bind \cx\cx 'anyfff_widget put_filename'
+bind \cx\cg 'anyfff_widget checkout_git_branch'
+bind \cx\cb 'anyfff_widget put_git_branch'
 
 alias cd 'anyfff_widget cdr'
 ```
