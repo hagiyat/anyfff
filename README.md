@@ -1,6 +1,6 @@
 # anyfff
 
-fuzzy finder wrapper plugin for fish
+fuzzy finder wrapper plugin for fish.
 
 inspired from [mollifier/anyframe](https://github.com/mollifier/anyframe)
 
@@ -10,30 +10,38 @@ You can use your favorite fuzzy finder!
 
 ### Widget
 
-- anyfff.widget.put_history
+*Main Command*: anyfff_widget
+
+*Sub Commands*:
+
+- put_history
   - Put the command selected from the command history on the commandline
-- anyfff.widget.put_filename
+- put_filename
   - Put the filename selected from some files on the commandline
   - The candidates are optimized according to the content of the command line
   - Currently it does not correspond to several git commands :cry:
-- anyfff.widget.checkout_git_branch
+- checkout_git_branch
   - Checkout to branch selected from branch including remote branch
-- anyfff.widget.put_git_branch
+- put_git_branch
   - Put the selected branch on the commandline
-- anyfff.widget.kill_process
+- kill_process
   - Kill 9 for the selected running process
   - Although it is a standard, I wonder if I will use it ...?
-- anyfff.widget.cdr
+- cdr
   - Select from cd history and directories around the current directory and cd to that directory
 
 
 ## Install
 
-With [fisherman]
+With [*fundle*](https://github.com/tuvistavie/fundle)
 
+1. add to your `config.fish`
+
+```fish
+fundle plugin hagiyat/anyfff
 ```
-fisher hagiyat/anyfff
-```
+
+2. `$ fundle install`
 
 ## Requirements
 
@@ -52,12 +60,12 @@ Please assign favorite key bind to widget, set alias and use it.
 Example:
 
 ```fish
-bind \cr anyfff.widget.put_history
-bind \cx\cx anyfff.widget.put_filename
-bind \cx\cg anyfff.widget.checkout_git_branch
-bind \cx\cb anyfff.widget.put_git_branch
+bind \cr anyfff_widget put_history
+bind \cx\cx anyfff_widget put_filename
+bind \cx\cg anyfff_widget checkout_git_branch
+bind \cx\cb anyfff_widget put_git_branch
 
-alias cd anyfff.cdr.widget
+alias cd 'anyfff_widget cdr'
 ```
 
 ## Configurations
