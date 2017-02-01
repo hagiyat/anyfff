@@ -86,7 +86,7 @@ end
 
 ```fish
 # The contents of the peripheral directory to which you cd are cached.
-set -x ANYFFF__CDR_CACHE_PATH ~/.local/share/fish/cdr
+set -x ANYFFF__CDR_CACHE_PATH ~/.local/share/fish/anyfff/cdr
 # This is the retention period (days) setting.
 set -x ANYFFF__CDR_CACHE_LIFETIME 3
 set -x ANYFFF__FILESEARCH_MAXDEPTH 2
