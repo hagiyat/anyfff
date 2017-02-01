@@ -46,7 +46,7 @@ function __anyfff_env_setup
   __anyfff_env_register_event finder_option_multi ANYFFF__FINDER_APP_OPTION_MULTI
 
   # cache path for history of change directory
-  __anyfff_env_register_variable cdr_cache_path (__anyfff_env_try $ANYFFF__CDR_CACHE_PATH ~/.local/share/fish/cdr)
+  __anyfff_env_register_variable cdr_cache_path (__anyfff_env_try $ANYFFF__CDR_CACHE_PATH ~/.local/share/fish/anyfff/cdr)
   __anyfff_env_register_event cdr_cache_path ANYFFF__CDR_CACHE_PATH
 
   # 3days
