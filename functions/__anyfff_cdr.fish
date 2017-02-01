@@ -1,5 +1,8 @@
-function __anyfff_cdr -d 'Returns the merged directory of the directory around the current directory and the history of cd'
-  function _main
+function __anyfff_cdr \
+  -a _cdr_subcommand \
+  -d 'Returns the merged directory of the directory around the current directory and the history of cd'
+
+  function __anyfff_cdr_main
     begin
       cat (__cdr_history_file_path) \
         | __cdr_filter_pwd \
@@ -124,17 +127,23 @@ function __anyfff_cdr -d 'Returns the merged directory of the directory around t
   end
 
   # execute
-  _main
+  switch $_cdr_subcommand
+    case append_history
+      __cdr_append_cd_history
+    case update_cache
+      test (count $argv) -gt 1; and set -l target_path $argv[2..-1]
+      __cdr_update_cache $target_path
+    case clear_cache
+      __cdr_clear_cache
+    case '*'
+      __anyfff_cdr_main
+  end
 end
 
 # update directory statuses
 function __cdr_register --on-variable PWD
-  # fish -c __cdr_append_cd_history &
-  # fish -c "__cdr_update_cache (realpath \"$PWD/..\")" &
-  # fish -c "__cdr_update_cache (realpath $PWD)" &
-  # fish -c __cdr_clear_cache &
-  __cdr_append_cd_history
-  __cdr_update_cache (realpath "$PWD/..")
-  __cdr_update_cache (realpath $PWD)
-  __cdr_clear_cache
+  fish -c "__anyfff_cdr append_history" &
+  fish -c "__anyfff_cdr update_cache (realpath \"$PWD/..\")" &
+  fish -c "__anyfff_cdr update_cache (realpath $PWD)" &
+  fish -c "__anyfff_cdr clear_cache" &
 end

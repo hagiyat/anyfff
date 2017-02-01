@@ -91,7 +91,7 @@ function anyfff_widget -a subcommand
     if test (count $subcommand_arguments) -gt 0
       builtin cd $subcommand_arguments
     else
-      __anyfff_cdr \
+      __anyfff_cdr main \
         | __anyfff_finder -s "cd:$PWD > " \
         | __anyfff_util last \
         | read -l selected
@@ -102,7 +102,8 @@ function anyfff_widget -a subcommand
   end
 
   # call subcommand
-  if functions -q $subcommand
+  if contains $subcommand \
+    'put_history' 'put_filename' 'checkout_git_branch' 'put_git_branch' 'kill_process' 'cdr'
     eval $subcommand
   else
     echo "Undefined subcommand / $subcommand"
