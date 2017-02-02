@@ -86,8 +86,8 @@ function __anyfff_cdr \
   end
 
   function __cdr_push_log -a message
-    set -l path (__anyfff_env activity_path)
-    if set -q $path
+    set -l path (__anyfff_env cdr_activity_log_path)
+    if test -n $path
       echo $message >> $path
     end
   end
@@ -123,7 +123,7 @@ function __anyfff_cdr \
     end
 
     set -l hash_value (head -n 1 $file_name)
-    return ([ $hash_value -eq $dir_hash ])
+    return (test $hash_value = $dir_hash)
   end
 
   # execute
